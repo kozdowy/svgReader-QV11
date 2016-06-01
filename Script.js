@@ -39,6 +39,7 @@ function unitCheck(e) {
     }
     return e
 }
+var first = 1;
 function svgJson(e, t, n, r, i) {
     var s = {};
     var o = "";
@@ -83,11 +84,10 @@ function svgJson(e, t, n, r, i) {
         var u = [];
         u = gAtt($(e), t, n, r);
         var l = "yes";
-
-        if ($(e).attr("id") && $(e).prop("tagName") != "text") {
+        if ($(e).attr("id")) {
             if (u.length > 0) {
                 $.each(u, function (e) {
-                    if (this[0] == "fill" || this[0] == "font-style") {
+                    if (this[0] == "fill") {
                         return false
                     } else if (this[0] != "fill" && e + 1 === u.length) {
                         u.push(["fill", t]);
@@ -108,13 +108,10 @@ function svgJson(e, t, n, r, i) {
         }];
         if ($(e).prop("tagName") == "text") {
             if ($(e).attr("x")) {
-                c[0].x = $(e).attr("x")
+                c[0].x = $(e).attr("x");
             }
             if ($(e).attr("y")) {
-                c[0].y = $(e).attr("y") - 5;
-            }
-            if ($(e).attr("fill")) {
-                c[0].fill = $(e).attr("fill");
+                c[0].y = $(e).attr("y") - 6;
             }
         } else if ($(e).prop("tagName") == "circle") {
             if ($(e).attr("cx")) {
@@ -167,7 +164,6 @@ function gAtt(e, t, n, r) {
             }
         }
     });
-    var obj = e;
     if ($(e).attr("style")) {
         if ($(e).attr("style").split(";").length > 0) {
             var s = $(e).attr("style").split(";");
@@ -176,21 +172,16 @@ function gAtt(e, t, n, r) {
                     var e = this.toString().split(":");
                     var n = e[0].replace(/(^[\s\xA0]+|[\s\xA0]+$)/g, "");
                     var s = e[1].replace(/(^[\s\xA0]+|[\s\xA0]+$)/g, "");
-                    if ($(obj).prop("tagName") == "text"){
-                        i.push([n, s]);
-                    }
-                    else if ($.inArray(n, attarr) > -1) {
+                    if ($.inArray(n, attarr) > -1) {
                         if (n != "fill" || n == "fill" && s == "none" && r == "0") {
                             if (n == "stroke-width" && s * sScale > .5) {
                                 i.push([n, s * sScale])
                             } else {
                                 i.push([n, s])
                             }
-                        } else if (n == "fill"/* && $(obj).prop("tagName") != "text"*/) {
+                        } else if (n == "fill") {
                             i.push([n, t])
-                        }/* else {
-                            i.push([n, '#000000']);
-                        }*/
+                        }
                     }
                 }
             })
@@ -198,7 +189,6 @@ function gAtt(e, t, n, r) {
     }
     return i
 }
-
 function convertPolyToPath(e) {
     var e = e.split(/\s+|,/);
     var t = e.shift(),
@@ -311,15 +301,21 @@ function boom(e, t, n, r, i) {
         }
         if (u == "no") {
             var l = {};
-            if (s.indexOf("ranqt") === 0 && n.indexOf("ranqt") === 0) {
-                $.extend(l, i)
-            } else {
-                $.extend(l, r)
-            }
+	    if (e[s].type != "text"){
+                if (s.indexOf("ranqt") === 0 && n.indexOf("ranqt") === 0) {
+                    $.extend(l, i);
+                } else {
+                    $.extend(l, r)
+                }
+            } 
             if (e[s].attribs && e[s].attribs.length > 0) {
                 $.each(e[s].attribs, function () {
-                    l[this[0]] = this[1]
+                    l[this[0]] = this[1];
                 })
+            }
+            if (e[s].type == "text"){
+                l["fill"] = "#000000";
+                l["font-weight"] = "bold";
             }
             window[s].attr(l);
             if (n != "none") {
@@ -358,19 +354,26 @@ function loopData(e, t, n, r,cold) {
         }
     }
     var h = [];
+    //console.log("looping data");
+    //console.log(n);
+    /*
+    n.forEach(function (item) {
+        console.log("foreach: " + item.attr("text"));
+    });
+    */
     for (var f = 0; f < e.Rows.length; f++) {
         var l = e.Rows[f];
         var p = l[0].text; //region ID
+	//console.log("region: " + p);
+	//console.log("count: " + f);
         //var d = checkNull(l[1].text); //measure
         var d = 1;
 
         var v = l[2].text; //color expression
         var m = l[3].text; //popup contents
-        var la = l[1].text; //label contents?
-        if (typeof window["r" + r + p.toLowerCase() + "-t"] != "undefined") {
-            window["r" + r + p.toLowerCase() + "-t"].attr("text", la);
-        }
+        var la = l[1].text; //label contents
         if (typeof window["r" + r + p.toLowerCase()] != "undefined") {
+		/*
             if (m && m != "" && m != "0" && m != "-") {
                 window["r" + r + p.toLowerCase()].mousemove(popS).hover(function () {
                     $("#hoverBox p").html(this.data("pop"))
@@ -380,6 +383,8 @@ function loopData(e, t, n, r,cold) {
             } else {
                 window["r" + r + p.toLowerCase()].unmousemove(popS)
             }
+	    */
+            window["r" + r + p.toLowerCase()].unmousemove(popS);
             if (!window["r" + r + p.toLowerCase()].data("r")) {
                 window["r" + r + p.toLowerCase()].click(function () {
                     searchMe(e, this.data("r"))
@@ -400,7 +405,8 @@ function loopData(e, t, n, r,cold) {
             //console.info(blend);
                  window["r" + r + p.toLowerCase()].attr({
                     fill: blend,
-                    cursor: "pointer"
+                    cursor: "pointer",
+		    "z-index": 20
                 }).data({
                     r: p,
                     rVal: d,
@@ -408,24 +414,44 @@ function loopData(e, t, n, r,cold) {
                 });
             }
             
-
-            n.push(window["r" + r + p.toLowerCase()])
+            if (typeof window["r" + r + p.toLowerCase() + "-t"] != "undefined") {
+                //console.log("setting label to " + la);
+                //console.log("default: " + window["r" + r + p.toLowerCase() + "-t"].attr("text-default"));
+                var nam = "r" + r + p.toLowerCase() + "-t";
+                window[nam].attr({fill: "#000000", "z-index": 50, "text": la});
+                var bb = window[nam].getBBox();
+                window[nam].attr({x: bb.x + bb.width / 2, y: bb.y + bb.height / 2});
+                n.push(window["r" + r + p.toLowerCase() + "-t"]);
+            }
+            n.push(window["r" + r + p.toLowerCase()]);
             op = window["r" + r + p.toLowerCase()].clone(true);
-            op.attr({opacity: 0}).data({r: p, rVal: d, pop: m});
+            op.attr({opacity: 0, "z-index": 100}).data({r: p, rVal: d, pop: m});
             if (m && m != "" && m != "0" && m != "-") {
+                /*
                 op.mousemove(popS).hover(function () {
                     $("#hoverBox p").html(this.data("pop"))
                 }, function () {
                     $("#hoverBox").hide()
                 })
+                */
+                op.mousemove(popS).hover(hoverIn, hoverOut);
+                //console.log("added hover to " + la);
+            } else {
+                op.unmousemove(popS)
             }
-            //n.push(op);
-        } else if (typeof window["r" + r + p.toLowerCase() + "-t"] != "undefined") {
-            window["r" + r + p.toLowerCase() + "-t"].data({text: la});
+            n.push(op);
         }
     }
     return n
 }
+
+function hoverIn(){
+    $("#hoverBox p").html(this.data("pop"));
+}
+function hoverOut(){
+    $("#hoverBox").hide();
+}
+
 function popS(e) {
     $("#hoverBox").show();
     var t, n;
@@ -596,6 +622,20 @@ function svgMap_Example_Done() {
                         window["R" + r] = Raphael(r, n.GetWidth(), n.GetHeight());
                         e = window["R" + r].set();
                         boom(window["sj" + r], window["R" + r], "none", g, y);
+                        /*
+                        $.each(window["R" + r], function (s, o){
+                            console.log(s);
+                            console.log(window["R" + r][s]);
+                        });
+                        */
+                        window["R" + r].forEach(function (e) {
+                            //console.log("in forEach");
+                            if (e.attr("text")){
+                                //console.log("setting default text:");
+                                e.attr("title", e.attr("text"));
+                                //console.log(e.attr("title"));
+                            }
+                        });
                         e = loopData(n.Data, f, e, r,cold);
                         if ((parseInt(f) === 1) && (e.length > 0)) {
                             var d = e.getBBox();
@@ -619,11 +659,46 @@ function svgMap_Example_Done() {
                 })
             } else if (window["sj" + r]) {
             	//console.info("HERE?");
+                //var printAttr = 1;
                 window["R" + r].forEach(function (e) {
+                    //console.log("forEach text: " + e.attr("text"));
+                    //console.log("forEach text-default: " + e.attr("text-default"));
+                    //console.log("***forEach Object***");
+                    //console.log(e["id"]);
+                    /*
+                    if (printAttr){
+                        $.each(e, function(s, o){
+                            console.log(s);
+                            console.log(e[s]);
+                        });
+                        printAttr = 0;
+                    }
+                    */
+                    /*
+                    e.unmouseover(hoverIn);
+                    e.unmouseout(hoverOut);
+                    e.unhover(hoverIn, hoverOut);
                     e.unmousemove(popS);
-                    if (e.attr("fill") != h && e.attr("fill") != "none" && !(e.attr("font-style"))) {
-                        e.attr("fill", h);
-                        e.attr("fill-opacity", 1)
+                    */
+                    //e.hover(function(){}, function(){});
+                    //e.mousemove(function(){});
+                    //e.unhover();
+                    if (e.attr("opacity") == 0){
+                        //console.log("removing invisible");
+                        e.hide();
+                        //window["R" + r].exclude(e);
+                        //e.remove();
+                        //e.unmousemove(popS).unhover(hoverIn, hoverOut);
+                        //$(e).unbind('mouseenter mouseleave');
+                    }
+                    else{
+                        if (e.attr("fill") != h && e.attr("fill") != "none" && e.attr("font-weight") != "bold") {
+                            e.attr("fill", h);
+                            e.attr("fill-opacity", 1)
+                        }
+                        if (e.attr("font-weight") == "bold"){
+                            e.attr("text", e.attr("title"));
+                        }
                     }
                 });
                 c = window["vb" + r];
@@ -631,6 +706,7 @@ function svgMap_Example_Done() {
                 e.attr({
                     stroke: "#ff0000"
                 });
+                e.unmousemove(popS).unhover(hoverIn, hoverOut);
                 e = loopData(n.Data, f, e, r,cold);
                 if (parseInt(f) === 1) {
                     var E = e.getBBox();

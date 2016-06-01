@@ -1,5 +1,5 @@
-html { height: 100% }
-body { height: 100%; margin: 0; padding: 0 }
+html { height: 100%;}
+body { height: 100%; margin: 0; padding: 0; z-index = 5 }
 #hoverBox{display:none;font-size:12px;background-color: #fff;color:#333;font-family:Arial, Helvetica, sans-serif;position:absolute;top:0px;left:0px;background-repeat:no-repeat;overflow:hidden;z-index:999999999 !important;padding:0px 10px;border:1px solid #439400;line-height:14px;}
 .gold, .silver, .bronze, .total, .rank{clear:both;display:block;padding-left:10px;width:144px;padding-bottom:2px;}
 .total, .rank{font-weight:bold;}
@@ -15,4 +15,4 @@ body { height: 100%; margin: 0; padding: 0 }
 .panDown{top:16px;left:14px;width:8px;height:8px;}
 .controls{display:block;position:relative;top:0px;left:0px;z-index:999 !important;display:block;width:35px;height:64px;}
 .cHold{top:10px;left:0px;z-index:99 !important;display:block;width:35px;height:64px;position:absolute;}
-.svgloader{position:absolute; top:50%;left:50%}
+.svgloader{position:absolute; top:50%;left:50%;}

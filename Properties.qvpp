@@ -91,6 +91,10 @@
 	<div class='prop-grid_span-10 prop-grid_last'>
 		<div class='prop-grid_clear prop-grid_span-1' avq='prop_checkbox:.Chart.Text.6.Content'></div>
 	</div><br />
+	<div class='prop-grid_clear prop-grid_prepend-1 prop-grid_span-5' avq='prop_label'>Transparent</div>
+	<div class='prop-grid_span-10 prop-grid_last'>
+		<div class='prop-grid_clear prop-grid_span-1' avq='prop_checkbox:.Chart.Text.7.Content'></div>
+	</div><br />
 
 		</div>
 		<h3 class="prop-h3 accordion-shadow" avq="activeAccordionHeader:.:GenericPresentationFoldout.qvpp">
