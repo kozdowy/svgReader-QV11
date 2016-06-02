@@ -124,3 +124,18 @@ The properties are relatively straightforward:
 
 
 **Show Controls** will add pan and zoom controls to the extension.
+
+
+*********************************
+My Changes
+*********************************
+
+**Measure** has been replaced with **Label**. The Measure is always set to **1**, and so users must set each colour on their own in the **Color Expression**. **Label** is used for maps containing labels for each area, and are updated dynamically. However, for disabled regions, the label will go to its default value from the SVG. To access the labels, the text objects in the SVG must have the same tag as the region itself, appended with "-T". So, for example, the China region "CN-65" must have the label "CN-65-T".
+
+*********************************
+Known Issues
+*********************************
+
+In Webview, when changing sheets after using the map object, once you return to the sheet with the map, none of the SVG data will be displayed. A refresh of the Webview will bring back the appropriate data. I have yet to test this on an actual server to see if it's still an issue there.
+
+There's also no way so far to save the map, so until then users must have to rely on their OS's screenshot function.
